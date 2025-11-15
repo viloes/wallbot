@@ -15,8 +15,7 @@ class TelegramHandlers:
         self._register_handlers()
 
     def _is_authorized(self, message):
-        """Verifica si el usuario está autorizado"""
-        if message.from_user.id != AUTHORIZED_USER_ID:
+        if str(message.from_user.id) != AUTHORIZED_USER_ID:
             logging.warning(
                 f"Usuario no autorizado intentó usar el bot: "
                 f"{message.from_user.id} (@{message.from_user.username})"
