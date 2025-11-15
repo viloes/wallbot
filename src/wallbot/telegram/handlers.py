@@ -14,6 +14,20 @@ class TelegramHandlers:
         self.db = db
         self._register_handlers()
 
+    def _is_authorized(self, message):
+        """Verifica si el usuario está autorizado"""
+        if message.from_user.id != AUTHORIZED_USER_ID:
+            logging.warning(
+                f"Usuario no autorizado intentó usar el bot: "
+                f"{message.from_user.id} (@{message.from_user.username})"
+            )
+            self.bot.send_message(
+                message.chat.id,
+                "⛔ No estás autorizado para usar este bot."
+            )
+            return False
+        return True
+
     def _register_handlers(self):
         self.bot.message_handler(commands=['start', 'help', 's', 'h'])(self.send_welcome)
         self.bot.message_handler(commands=['add', 'añadir', 'append', 'a'])(self.add_search)
@@ -21,6 +35,9 @@ class TelegramHandlers:
         self.bot.message_handler(commands=['lis', 'listar', 'l'])(self.get_searches)
 
     def send_welcome(self, message):
+        if not self._is_authorized(message):
+            return
+            
         welcome_text = textwrap.dedent("""\
             *Utilización*
             /help
@@ -36,6 +53,9 @@ class TelegramHandlers:
         self.bot.send_message(message.chat.id, welcome_text, parse_mode='Markdown')
 
     def add_search(self, message):
+        if not self._is_authorized(message):
+            return
+            
         cs = ChatSearch()
         cs.chat_id = message.chat.id
         parameters = str(message.text).split(' ', 1)
@@ -63,12 +83,18 @@ class TelegramHandlers:
         self.db.add_search(cs)
 
     def delete_search(self, message):
+        if not self._is_authorized(message):
+            return
+            
         parameters = str(message.text).split(' ', 1)
         if len(parameters) < 2:
             return
         self.db.del_chat_search(message.chat.id, ' '.join(parameters[1:]))
 
     def get_searches(self, message):
+        if not self._is_authorized(message):
+            return
+            
         text = ''
         for chat_search in self.db.get_chat_searches(message.chat.id):
             if len(text) > 0:
