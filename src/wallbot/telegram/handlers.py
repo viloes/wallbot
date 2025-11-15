@@ -6,7 +6,7 @@ import telebot
 
 from src.wallbot.database.db_helper import DBHelper
 from src.wallbot.database.models import ChatSearch
-
+from src.wallbot.config.settings import AUTHORIZED_USER_ID
 
 class TelegramHandlers:
     def __init__(self, bot: telebot.TeleBot, db: DBHelper):
