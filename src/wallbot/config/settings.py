@@ -1,5 +1,6 @@
 import os
 
+AUTHORIZED_USER_ID = os.getenv("AUTHORIZED_USER_ID", "Authorized user ID does not exist")
 TOKEN = os.getenv("BOT_TOKEN", "Bot Token does not exist")
 PROFILE = os.getenv("PROFILE")
 
